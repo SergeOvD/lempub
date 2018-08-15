@@ -4,27 +4,13 @@ echo "##########################################################################
 echo "Please be Patient: Installation will start now..."
 echo "###################################################################################"
 
-cat << 'eof' >> /etc/nginx/sites-available/default
-server {
-	listen 80;
-	listen [::]:80;
+sudo apt-get update
 
-	server_name example.com www.example.com;
+# Nginx
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx Full'
+sed -i 's/14/30/g' /etc/logrotate.d/nginx
 
-	root /var/www/c;
-	index index.php index.html index.htm index.nginx-debian.html;
-
-	location / {
-		try_files $uri $uri/ =404;
-	}
-	
-	  location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-eof
+#php
+sudo apt-get -y install php-fpm php-mysql php7.0-xml php-curl
+sed -i 's/;cgi.fix_pathinfo=0/cgi.fix_pathinfo=1/g' /etc/php/7.0/fpm/php.ini
